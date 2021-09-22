@@ -42,12 +42,23 @@ public class ProductRepositoryTests {
 	}
 
 	@Test
+	public void findByIdShouldReturnNonEmptyObjectWhenIdExists() {
+		
+		// Act
+		repository.findById(existingId);
+		
+		// Assert  // isPresente está testando se existe um obj dentro do Optional, como usamos assertTrue estamos testando se o objeto está presente.
+		Optional<Product> result = repository.findById(existingId);
+		Assertions.assertTrue(result.isPresent());
+	}	
+	
+	@Test
 	public void deleteShouldDeleteObjectWhenIdExists() {
 		
 		// Act
 		repository.deleteById(existingId);
 		
-		// Assert  // isPresente está testando se existe um obj dentro do Optional
+		// Assert  // isPresente está testando se existe um obj dentro do Optional, como usamos assertFalse estamos testando se o objeto não está presente.
 		Optional<Product> result = repository.findById(existingId);
 		Assertions.assertFalse(result.isPresent());
 	}	
