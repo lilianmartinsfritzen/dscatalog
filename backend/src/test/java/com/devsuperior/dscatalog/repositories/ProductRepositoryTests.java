@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import com.devsuperior.dscatalog.entities.Product;
+import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 import com.devsuperior.dscatalog.tests.Factory;
 
 @DataJpaTest
@@ -42,15 +43,20 @@ public class ProductRepositoryTests {
 	}
 
 	@Test
-	public void findByIdShouldReturnNonEmptyObjectWhenIdExists() {
-		
-		// Act
-		repository.findById(existingId);
+	public void findByIdShouldReturnNonEmptyOptionalWhenIdExists() {
 		
 		// Assert  // isPresente está testando se existe um obj dentro do Optional, como usamos assertTrue estamos testando se o objeto está presente.
 		Optional<Product> result = repository.findById(existingId);
 		Assertions.assertTrue(result.isPresent());
 	}	
+	
+	@Test
+	public void findByIdShouldReturnEmptyOptionalWhenIdDoesNotExist() {
+
+		// Assert  // isPresente está testando se existe um obj dentro do Optional, como usamos assertTrue estamos testando se o objeto está presente.
+		Optional<Product> result = repository.findById(nonExistingId);
+		Assertions.assertTrue(result.isEmpty());
+	}
 	
 	@Test
 	public void deleteShouldDeleteObjectWhenIdExists() {
