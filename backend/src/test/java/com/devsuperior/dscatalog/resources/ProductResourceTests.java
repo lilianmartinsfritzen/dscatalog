@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.devsuperior.dscatalog.dto.ProductDTO;
 import com.devsuperior.dscatalog.services.ProductService;
@@ -42,7 +44,17 @@ public class ProductResourceTests {
 	
 	@Test
 	public void findAllShouldReturnPage() throws Exception {
-		mockMvc.perform(get("/products")).andExpect(status().isOk());
+		// Logo abaixo segue exemplo de uma sintaxe que pode ser utilizada com o mockMvc
+		// mockMvc.perform(get("/products")).andExpect(status().isOk());
+		
+		// A sintaxe abaixo para uso do mockMvc torna o código mais legível e é interessante para fins didáticos.
+		// Precisamos atribuir o mockMvc a uma variável do tipo ResultActions para então incluírmos as Assertions.
+		// .accept(MediaType.APPLICATION_JSON) indica que essa requisição aceitará como resposta um tipo JSON.
+		ResultActions result = 
+				mockMvc.perform(get("/products")
+						.accept(MediaType.APPLICATION_JSON));
+		
+		result.andExpect(status().isOk());
 	}
 }
 
