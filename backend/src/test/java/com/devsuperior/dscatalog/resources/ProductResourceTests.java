@@ -25,8 +25,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.devsuperior.dscatalog.dto.ProductDTO;
-import com.devsuperior.dscatalog.entities.Category;
-import com.devsuperior.dscatalog.entities.Product;
 import com.devsuperior.dscatalog.services.ProductService;
 import com.devsuperior.dscatalog.services.exceptions.DatabaseException;
 import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
@@ -48,20 +46,15 @@ public class ProductResourceTests {
 	private long existingId;
 	private long nonExistingId;
 	private long dependentId;
-	private Product product;
-	private Category category;
 	
 	private ProductDTO productDTO;
 	private PageImpl<ProductDTO> page;
 	
 	@BeforeEach
-	void setUp() throws Exception {
-		
+	void setUp() throws Exception {		
 		existingId = 1L;
 		nonExistingId = 2L;
 		dependentId = 3L;
-		product = Factory.createProduct();
-		category = Factory.createCategory();
 		
 		productDTO = Factory.createProductDTO();
 		page = new PageImpl<>(List.of(productDTO));
