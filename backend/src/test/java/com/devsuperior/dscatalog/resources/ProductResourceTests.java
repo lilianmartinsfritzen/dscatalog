@@ -179,16 +179,13 @@ public class ProductResourceTests {
 		result.andExpect(status().isNoContent());
 	}
 	
+	@Test
+	public void deleteShouldReturnNotFoundWhenIdDoesNotExists() throws Exception {
+		
+		ResultActions result = 
+				mockMvc.perform(delete("/products/{id}", nonExistingId)
+						.accept(MediaType.APPLICATION_JSON));	
+		
+		result.andExpect(status().isNotFound());
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
