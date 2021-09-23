@@ -3,6 +3,8 @@ package com.devsuperior.dscatalog.services;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +22,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.devsuperior.dscatalog.dto.ProductDTO;
+import com.devsuperior.dscatalog.entities.Category;
 import com.devsuperior.dscatalog.entities.Product;
+import com.devsuperior.dscatalog.repositories.CategoryRepository;
 import com.devsuperior.dscatalog.repositories.ProductRepository;
 import com.devsuperior.dscatalog.services.exceptions.DatabaseException;
 import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
@@ -35,11 +39,17 @@ public class ProductServiceTests {
 	@Mock
 	private ProductRepository repository;
 	
+	@Mock
+	private CategoryRepository categoryRepository;
+	
 	private long existingId;
 	private long nonExistingId;
 	private long dependentId;
-	private PageImpl<Product> page;  // PageImpl é um tipo concreto que representa uma página de dados, usado nos testes.
 	private Product product;
+	private ProductDTO productDTO;
+	private Category category;
+
+	private PageImpl<Product> page;  // PageImpl é um tipo concreto que representa uma página de dados, usado nos testes.
 	
 	@BeforeEach
 	void setUp() throws Exception {
@@ -47,7 +57,10 @@ public class ProductServiceTests {
 		nonExistingId = 2L;
 		dependentId = 3L;
 		product = Factory.createProduct();
+		productDTO = Factory.createProductDTO();
+		category = Factory.createCategory();
 		page = new PageImpl<>(List.of(product));
+
 		
 		// Quando o método retorna algo (não é void) primeiro teremos o .when, depois a ação .doXxxx
 		// Quando passamos um argumento para uma chamada de método simulado, muitas vezes passamos um argumento qualquer por ser uma operação mais simples.
@@ -59,12 +72,27 @@ public class ProductServiceTests {
 		Mockito.when(repository.findById(existingId)).thenReturn(Optional.of(product));
 		Mockito.when(repository.findById(nonExistingId)).thenReturn(Optional.empty());
 		
+		Mockito.when(repository.getOne(existingId)).thenReturn(product);
+		Mockito.when(repository.getOne(nonExistingId)).thenThrow(EntityNotFoundException.class);
+		
+		Mockito.when(categoryRepository.getOne(existingId)).thenReturn(category);
+		Mockito.when(categoryRepository.getOne(nonExistingId)).thenThrow(EntityNotFoundException.class);
+		
 		// É possível subtrair a palavra Mockito chamando diretamente o método, exemplo doNothing, fazendo isso é necessário realizar os imports estáticos da bliblioteca.
 		// Confirguração de comportamento simulado chamando o Mockito
 		// Quando um método é void primeiro colocamos a ação .doXxxx depois o .when
 		Mockito.doNothing().when(repository).deleteById(existingId);		
 		Mockito.doThrow(EmptyResultDataAccessException.class).when(repository).deleteById(nonExistingId);		
-		Mockito.doThrow(DataIntegrityViolationException.class).when(repository).deleteById(dependentId);	
+		Mockito.doThrow(DataIntegrityViolationException.class).when(repository).deleteById(dependentId);
+	}
+	
+	
+	@Test
+	public void updateShouldReturnProductDTOWhenIdExists() {
+			
+		ProductDTO result = service.update(existingId, productDTO);
+		
+		Assertions.assertNotNull(result);
 	}
 	
 	@Test
