@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,8 +26,8 @@ public class User implements Serializable {
 	private String lastName;
 	private String email;
 	private String password;
-
-	@ManyToMany
+										 // O uso abaixo é um exigência do Spring Security
+	@ManyToMany(fetch = FetchType.EAGER) // O argumento fetch = FetchType.EAGER força a busca de usuários no DB já vir com as Roles.
 	@JoinTable(name = "tb_user_role",
 		joinColumns = @JoinColumn(name = "user_id"),
 		inverseJoinColumns = @JoinColumn(name = "role_id"))
